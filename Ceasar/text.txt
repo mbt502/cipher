@@ -1,1 +1,50 @@
-Java
+package com.company;
+import java.io.*;
+import java.util.*;
+public class Main {
+
+    public static void main(String[] args)throws Exception {
+
+        BufferedReader br = new BufferedReader(new FileReader("key.txt"));
+        String key = br.readLine();
+        br.close();
+        int k = Integer.parseInt(key);
+        System.out.println("1: Зашифровать текст");
+        System.out.println("2: Расшифровать текст");
+        Scanner in = new Scanner(System.in);
+        int r = in.nextInt();
+        if(r == 1) {
+            BufferedReader bf = new BufferedReader(new FileReader("text.txt"));
+            String text = bf.readLine();
+            bf.close();
+            StringBuilder output = new StringBuilder();
+            char[] chars = text.toCharArray();
+            for (int i = 0; text.length() > i; i++) {
+                chars[i] = (char) (chars[i] + k);
+                output.append(chars[i]);
+            }
+            File file = new File("crypto_text.txt");
+            PrintWriter pw = new PrintWriter(file);
+            pw.println(output.toString());
+            pw.close();
+            BufferedReader bp = new BufferedReader(new FileReader("crypto_text.txt"));
+            bp.close();
+            System.out.print("Зашифрованный текст:" + output);
+        }
+        else if(r == 2){
+            BufferedReader bf = new BufferedReader(new FileReader("crypto_text.txt"));
+            String text = bf.readLine();
+            bf.close();
+            StringBuilder output = new StringBuilder();
+            char[] chars = text.toCharArray();
+            for (int i = 0; text.length() > i; i++) {
+                chars[i] = (char) (chars[i] - k);
+                output.append(chars[i]);
+            }
+            System.out.print("Расшифрованный текст: " + output);
+        }
+        else{
+            System.out.println("Error");
+        }
+    }
+}

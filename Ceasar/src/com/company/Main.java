@@ -1,54 +1,50 @@
 package com.company;
-import java.io.*;// чтение и запись файлов
-import java.util.*;// ввод с клавиатуры
+import java.io.*;
+import java.util.*;
 public class Main {
 
-    private static char[] upper = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N', 'O','P','Q',
-                    'R','S','T','U','V','W','X','Y','Z'};// верхний регистр
-
-    private static char[] lower= {'a','b','c','d','e','f','g','h',
-            'i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};// нижний регистр
-
-    private static final int n = 26;// кол-во символов массива(английский алфавит)
-    private static final int k = 3;// ключ к шифру
-
     public static void main(String[] args)throws Exception {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Введите сообщение для зашифровки");
-        String input = s.nextLine();
+
+        BufferedReader br = new BufferedReader(new FileReader("key.txt"));
+        String key = br.readLine();
+        br.close();
+        int k = Integer.parseInt(key);
+        System.out.println("1: Зашифровать текст");
+        System.out.println("2: Расшифровать текст");
+        Scanner in = new Scanner(System.in);
+        int r = in.nextInt();
         StringBuilder output = new StringBuilder();
-        for(int x = 0; x < input.length(); ++x){
-            char c = input.charAt(x);
-            if(findIndLower(c) == -1){
-                int v = (findIndUpper(c)+k)%n;
-                output.append(upper[v]);
+        if(r == 1) {
+            FileInputStream fstream = new FileInputStream("text.txt");
+            BufferedReader bf = new BufferedReader(new InputStreamReader(fstream));
+            File file = new File("crypto_text.txt");
+            PrintWriter pw = new PrintWriter(file);
+            String text;
+            while((text = bf.readLine()) != null) {
+                char[] chars = text.toCharArray();
+                for (int i = 0; text.length() > i; i++) {
+                    chars[i] = (char) (chars[i] + k);
+                    output.append(chars[i]);
+                }
+                System.out.print("Зашифрованный текст:" + output.toString());
             }
-            if(findIndUpper(c) == -1){
-                int v = (findIndLower(c)+k)%n;
-                output.append(lower[v]);
-            }
+            pw.print(output.toString());
+            pw.close();
+            bf.close();
         }
-        File file = new File("crypto_text.txt");
-        PrintWriter pw = new PrintWriter(file);// запись файла
-        pw.println(output.toString());// вывод текста в файл
-        pw.close();
-        System.out.println(input + " - исходное сообщение");
-        System.out.println(output.toString() + " - это сообщение сохранено в crypto_text.txt");
-    }
-
-    private static int findIndUpper(char c){
-        int rez = -1;
-        for(int x = 0; x < upper.length; ++x){
-            if(c == upper[x]) rez = x;
+        else if(r == 2){
+            BufferedReader bf = new BufferedReader(new FileReader("crypto_text.txt"));
+            String text = bf.readLine();
+                bf.close();
+                char[] chars = text.toCharArray();
+                for (int i = 0; text.length() > i; i++) {
+                    chars[i] = (char) (chars[i] - k);
+                    output.append(chars[i]);
+                }
+                System.out.println("Расшифрованный текст: " + output.toString());
+                }
+        else{
+            System.out.println("Error");
         }
-        return rez;
-    }
-
-    private static int findIndLower(char c){
-        int rez = -1;
-        for(int x = 0; x < lower.length; ++x){
-            if(c == lower[x]) rez = x;
-        }
-        return rez;
     }
 }
